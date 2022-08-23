@@ -38,7 +38,7 @@ def read_coucou():
 # ****************************** USERS AND ARTICLES DATA MANAGEMENT *****************************
 
 @app.post("/articles")
-def articles2(file: UploadFile = File(...)):
+async def articles2(file: UploadFile = File(...)):
     return save_articles(file)
 
 @app.post("/users")
