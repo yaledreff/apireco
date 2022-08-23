@@ -22,10 +22,10 @@ from utils import *
 
 app = FastAPI()
 # chargement des données : matrice de factorisation SVD [Modèle collaboratif]
-# dfPreds = pd.read_csv('data/dfPredictions.csv').set_index('click_article_id')
-# dfPreds.columns = dfPreds.columns.astype(int)
-# dfArticlesActive = pd.read_csv('data/dfArticlesActive.csv')
-# dfArticlesPerActiveUser = pd.read_csv('data/dfArticlesPerActiveUser.csv')
+dfPreds = pd.read_csv('/data/dfPredictions.csv').set_index('click_article_id')
+dfPreds.columns = dfPreds.columns.astype(int)
+dfArticlesActive = pd.read_csv('/data/dfArticlesActive.csv')
+dfArticlesPerActiveUser = pd.read_csv('/data/dfArticlesPerActiveUser.csv')
 
 @app.get("/")
 def read_root():
@@ -33,9 +33,7 @@ def read_root():
 
 @app.get("/coucou")
 def read_coucou():
-    dfArticlesActive = pd.read_csv('/data/dfArticlesActive.csv')
-    nbRows = dfArticlesActive.shape[0]
-    return {"message": "Coucou from the API : " + str(nbRows)}
+    return {"message": "Coucou from the API"}
 
 # ****************************** USERS AND ARTICLES DATA MANAGEMENT *****************************
 
@@ -58,15 +56,14 @@ def predict(param: ParamPred):
     userId = param.getUserId()
     topN = param.getTopN()
     # Instanciation de la classe de recommandation (collaborative model)
-    #  cfRecommenderModel = CFRecommender(dfPreds)
+    cfRecommenderModel = CFRecommender(dfPreds)
     # Liste les articles déjà lus par l'utilisateurs (exclus des recommandations)
-    # itemsToIgnore = get_items_interacted(userId, dfArticlesPerActiveUser)
+    itemsToIgnore = get_items_interacted(userId, dfArticlesPerActiveUser)
     # prediction
-    #  pred = cfRecommenderModel.recommend_items(userId, itemsToIgnore, topN)
-    #  response = ResponsePreds(pred).getPreds()
-    # responseJson = jsonable_encoder(response)
-    # return JSONResponse(content=responseJson)
-    return 1
+    pred = cfRecommenderModel.recommend_items(userId, itemsToIgnore, topN)
+    response = ResponsePreds(pred).getPreds()
+    responseJson = jsonable_encoder(response)
+    return JSONResponse(content=responseJson)
 
 if __name__ == "__main__":
     uvicorn.run("main:app")
