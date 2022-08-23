@@ -17,8 +17,6 @@ import uvicorn
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-from azure.storage.file import FileService
-
 from model import *
 from utils import *
 
@@ -35,10 +33,9 @@ def read_root():
 
 @app.get("/coucou")
 def read_coucou():
-    file_service = FileService(account_name='myaccount', account_key='mykey')
     dfArticlesActive = pd.read_csv('/data/dfArticlesActive.csv')
-    # nbRows = dfArticlesActive.shape[0]
-    return {"message": "Coucou from the API : "}
+    nbRows = dfArticlesActive.shape[0]
+    return {"message": "Coucou from the API : " + nbRows}
 
 # ****************************** USERS AND ARTICLES DATA MANAGEMENT *****************************
 
