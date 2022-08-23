@@ -33,6 +33,7 @@ def read_root():
 
 @app.get("/coucou")
 def read_coucou():
+    dfArticlesActive = pd.read_csv('data/dfArticlesActive.csv')
     return {"message": "Coucou from the API"}
 
 # ****************************** USERS AND ARTICLES DATA MANAGEMENT *****************************
@@ -56,14 +57,15 @@ def predict(param: ParamPred):
     userId = param.getUserId()
     topN = param.getTopN()
     # Instanciation de la classe de recommandation (collaborative model)
-    cfRecommenderModel = CFRecommender(dfPreds)
+    #  cfRecommenderModel = CFRecommender(dfPreds)
     # Liste les articles déjà lus par l'utilisateurs (exclus des recommandations)
-    itemsToIgnore = get_items_interacted(userId, dfArticlesPerActiveUser)
+    # itemsToIgnore = get_items_interacted(userId, dfArticlesPerActiveUser)
     # prediction
-    pred = cfRecommenderModel.recommend_items(userId, itemsToIgnore, topN)
-    response = ResponsePreds(pred).getPreds()
-    responseJson = jsonable_encoder(response)
-    return JSONResponse(content=responseJson)
+    #  pred = cfRecommenderModel.recommend_items(userId, itemsToIgnore, topN)
+    #  response = ResponsePreds(pred).getPreds()
+    # responseJson = jsonable_encoder(response)
+    # return JSONResponse(content=responseJson)
+    return 1
 
 if __name__ == "__main__":
     uvicorn.run("main:app")
