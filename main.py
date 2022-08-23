@@ -22,14 +22,18 @@ from utils import *
 
 app = FastAPI()
 # chargement des données : matrice de factorisation SVD [Modèle collaboratif]
-dfPreds = pd.read_csv('data/dfPredictions.csv').set_index('click_article_id')
-dfPreds.columns = dfPreds.columns.astype(int)
-dfArticlesActive = pd.read_csv('data/dfArticlesActive.csv')
-dfArticlesPerActiveUser = pd.read_csv('data/dfArticlesPerActiveUser.csv')
+# dfPreds = pd.read_csv('data/dfPredictions.csv').set_index('click_article_id')
+# dfPreds.columns = dfPreds.columns.astype(int)
+# dfArticlesActive = pd.read_csv('data/dfArticlesActive.csv')
+# dfArticlesPerActiveUser = pd.read_csv('data/dfArticlesPerActiveUser.csv')
 
 @app.get("/")
 def read_root():
     return {"message": "Welcome from the API"}
+
+@app.get("/coucou")
+def read_coucou():
+    return {"message": "Coucou from the API"}
 
 # ****************************** USERS AND ARTICLES DATA MANAGEMENT *****************************
 
