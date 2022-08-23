@@ -34,7 +34,8 @@ def read_root():
 @app.get("/coucou")
 def read_coucou():
     dfArticlesActive = pd.read_csv('data/dfArticlesActive.csv')
-    return {"message": "Coucou from the API"}
+    nbRows = dfArticlesActive.shape[0]
+    return {"message": "Coucou from the API : " + str(nbRows)}
 
 # ****************************** USERS AND ARTICLES DATA MANAGEMENT *****************************
 
