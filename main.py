@@ -21,11 +21,6 @@ from model import *
 from utils import *
 
 app = FastAPI()
-# chargement des données : matrice de factorisation SVD [Modèle collaboratif]
-dfPreds = pd.read_csv('/data/dfPredictions.csv').set_index('click_article_id')
-dfPreds.columns = dfPreds.columns.astype(int)
-dfArticlesActive = pd.read_csv('/data/dfArticlesActive.csv')
-dfArticlesPerActiveUser = pd.read_csv('/data/dfArticlesPerActiveUser.csv')
 
 @app.get("/")
 def read_root():
@@ -49,12 +44,24 @@ def articles2(file: UploadFile = File(...)):
 
 @app.post("/train")
 def predict():
-    return {"message": "coucou le train"}
+    # chargement des données :
+    dfArticlesActive = pd.read_csv(PATH_ARTICLES)
+    dfArticlesPerActiveUser = pd.read_csv(PATH_ARTICLES_USERS)
+    # retraitement des données (on limite le dataset aux utilisateurs ayant le plus de consult et aux articles les plus vus)
+    dfArticlesPerActiveUser = setMinArticlesViews(dfArticlesPerActiveUser, minViews=100)
+    dfArticlesPerActiveUser = setMinUsersViews(dfArticlesPerActiveUser, minViews=60)
+    dfPreds = getSVDFactoMatrix(dfArticlesPerActiveUser)
+    save_preds(dfPreds)
+    return {"message": "Entrainement terminé avec succès"}
 
 @app.post("/predict")
 def predict(param: ParamPred):
     userId = param.getUserId()
     topN = param.getTopN()
+    # chargement des données : matrice de factorisation SVD [Modèle collaboratif]
+    dfPreds = pd.read_csv(PATH_PREDICTIONS).set_index('click_article_id')
+    dfPreds.columns = dfPreds.columns.astype(int)
+    dfArticlesPerActiveUser = pd.read_csv(PATH_ARTICLES_USERS)
     # Instanciation de la classe de recommandation (collaborative model)
     cfRecommenderModel = CFRecommender(dfPreds)
     # Liste les articles déjà lus par l'utilisateurs (exclus des recommandations)

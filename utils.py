@@ -1,8 +1,9 @@
 import os
 import shutil
 
-PATH_ARTICLES = '/data/dfArticlesActive.csv'
-PATH_ARTICLES_USERS = '/data/dfArticlesPerActiveUser.csv'
+PATH_ARTICLES = 'data/dfArticlesActive.csv'
+PATH_ARTICLES_USERS = 'data/dfArticlesPerActiveUser.csv'
+PATH_PREDICTIONS = 'data/dfPredictions.csv'
 
 def save_file(file, path):
     if os.path.exists(path):
@@ -13,7 +14,12 @@ def save_file(file, path):
     return {"info": f"file '{file.filename}' saved at '{path}'"}
 
 def save_articles(uploadfile):
-    return save_file(uploadfile, PATH_ARTICLES)
+    result = save_file(uploadfile, PATH_ARTICLES)
+    return result
 
 def save_users(uploadfile):
-    return save_file(uploadfile, PATH_ARTICLES_USERS)
+    result = save_file(uploadfile, PATH_ARTICLES_USERS)
+    return result
+
+def save_preds(dfPreds):
+    dfPreds.to_csv(PATH_PREDICTIONS)

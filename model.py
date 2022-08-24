@@ -1,5 +1,6 @@
 
 import pandas as pd
+import numpy as np
 
 from scipy.sparse import csr_matrix
 import sklearn
@@ -17,6 +18,13 @@ def setMinArticlesViews(dfArticlesPerActiveUser, minViews=2):
     dfArticlesPerActiveUser = dfArticlesPerActiveUser[~dfArticlesPerActiveUser['click_article_id'].isin(lstArticlesOut)]
     return dfArticlesPerActiveUser
 
+def setMinUsersViews(dfArticlesPerActiveUser, minViews=2):
+    # Retire les utilisatuers qui n'ont pas un minimum de consultations de 'minViews'
+    dfUsersViews = dfArticlesPerActiveUser[['user_id', 'session_id']].groupby(['user_id']).count().reset_index()
+    lstUsersOut = dfUsersViews[dfUsersViews['session_id'] < minViews]['user_id'].unique().tolist()
+    dfArticlesPerActiveUser = dfArticlesPerActiveUser[~dfArticlesPerActiveUser['user_id'].isin(lstUsersOut)]
+    return dfArticlesPerActiveUser
+
 def getSVDFactoMatrix(dfArticlesPerActiveUser):
     dfUsersItemsPivotMatrix = dfArticlesPerActiveUser.pivot(index='user_id', columns='click_article_id', values='session_id').fillna(0)
     usersItemsPivotMatrix = dfUsersItemsPivotMatrix.values
@@ -24,8 +32,11 @@ def getSVDFactoMatrix(dfArticlesPerActiveUser):
     #Factorisation de la matrice
     usersItemsPivotSparseMatrix = csr_matrix(usersItemsPivotMatrix)
     U, sigma, Vt = svds(usersItemsPivotSparseMatrix, k=15)
-
-    return 'coucou'
+    sigma = np.diag(sigma)
+    allUserPredictedRatings = np.dot(np.dot(U, sigma), Vt)
+    allUserPredictedRatingsNorm = sklearn.preprocessing.normalize(allUserPredictedRatings)
+    DfPreds = pd.DataFrame(allUserPredictedRatingsNorm, columns=dfUsersItemsPivotMatrix.columns, index=usersIds).transpose()
+    return DfPreds
 
 def train_model():
     dfArticlesPerActiveUser = pd.read_csv('data/dfArticlesPerActiveUser.csv')
