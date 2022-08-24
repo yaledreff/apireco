@@ -1,9 +1,9 @@
 import os
 import shutil
 
-PATH_ARTICLES = 'data/dfArticlesActive.csv'
-PATH_ARTICLES_USERS = 'data/dfArticlesPerActiveUser.csv'
-PATH_PREDICTIONS = 'data/dfPredictions.csv'
+PATH_ARTICLES = '/data/dfArticlesActive.csv'
+PATH_ARTICLES_USERS = '/data/dfArticlesPerActiveUser.csv'
+PATH_PREDICTIONS = '/data/dfPredictions.csv'
 
 def save_file(file, path):
     if os.path.exists(path):
