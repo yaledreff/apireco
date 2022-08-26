@@ -51,6 +51,7 @@ def predict():
     dfArticlesPerActiveUser = setMinArticlesViews(dfArticlesPerActiveUser, minViews=100)
     dfArticlesPerActiveUser = setMinUsersViews(dfArticlesPerActiveUser, minViews=60)
     dfPreds = getSVDFactoMatrix(dfArticlesPerActiveUser)
+    # Sauvegarde des prévisions
     save_preds(dfPreds)
     return {"message": "Entrainement terminé avec succès"}
 
