@@ -33,17 +33,24 @@ def read_coucou():
 # ****************************** USERS AND ARTICLES DATA MANAGEMENT *****************************
 
 @app.post("/articles")
-async def articles2(file: UploadFile = File(...)):
+async def setArticles(file: UploadFile = File(...)):
     return save_articles(file)
 
 @app.post("/users")
-def articles2(file: UploadFile = File(...)):
+async def setUsers(file: UploadFile = File(...)):
     return save_users(file)
+
+@app.get("/users")
+async def getUsers():
+    dfArticlesPerActiveUser = pd.read_csv(PATH_ARTICLES_USERS)
+    lstUsers = getListUsers(dfArticlesPerActiveUser)
+    responseJson = jsonable_encoder(lstUsers)
+    return JSONResponse(content=responseJson)
 
 # ****************************** RECOMMENDATION MODEL [TRAIN + PREDICT] *****************************
 
 @app.post("/train")
-def predict():
+async def predict():
     # chargement des données :
     dfArticlesActive = pd.read_csv(PATH_ARTICLES)
     dfArticlesPerActiveUser = pd.read_csv(PATH_ARTICLES_USERS)
@@ -56,7 +63,7 @@ def predict():
     return {"message": "Entrainement terminé avec succès"}
 
 @app.post("/predict")
-def predict(param: ParamPred):
+async def predict(param: ParamPred):
     userId = param.getUserId()
     topN = param.getTopN()
     # chargement des données : matrice de factorisation SVD [Modèle collaboratif]

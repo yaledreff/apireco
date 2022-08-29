@@ -21,5 +21,9 @@ def save_users(uploadfile):
     result = save_file(uploadfile, PATH_ARTICLES_USERS)
     return result
 
+def getListUsers(dfArticlesPerActiveUser):
+    lstUsers = dfArticlesPerActiveUser['user_id'].unique().tolist()
+    return lstUsers
+
 def save_preds(dfPreds):
     dfPreds.to_csv(PATH_PREDICTIONS)
